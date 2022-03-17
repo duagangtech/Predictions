@@ -2,7 +2,7 @@ streamlit
 #transformers
 tensorflow
 requests
-sqlite3
+#sqlite3
 sklearn
 pandas
 numpy
