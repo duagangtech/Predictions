@@ -8,6 +8,6 @@ pandas
 numpy
 sentence_transformers
 feedparser
-time
+#time
 bs4 
 regex
