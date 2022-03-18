@@ -22,8 +22,6 @@ name_of_table = "CNN_News"
 model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 
 
-#print(Current_df)
-
 def remove_duplicate_links(link_list, new_url):
     """
     remove_duplicate(old_url, new_url) return True if new_url is already in link_list and False otherwise
@@ -65,21 +63,16 @@ def get_RSS_data (URL):
     full_news = []
     for i in range(num_of_entries):
         Current_news = news_links[i]
-        #print("Check")
         if remove_duplicate_links(old_url, Current_news.link):
             #Current_news = news_links[i]
-            #print(remove_duplicate_links(old_url, Current_news.link))
-            #print(old_url)
-            #print(Current_news.link)
             publish_date = [Current_news.published]
             news_title = [Current_news.title]
             sentence = Current_news.summary
             head, sep, tail = sentence.partition('<div class=')
             news_summary = [head]
             news_link = [Current_news.link]
-            #print(news_link)
             # to avoid sending too many requests at once
-            #time.sleep(5)
+            time.sleep(5)
             # Scrape based on news structure
             if re.match(live_news_check, Current_news.link):
                 r = requests.get(Current_news.link)
@@ -198,7 +191,3 @@ def rss_to_db(database_name):
 
 if __name__ == '__main__':
     rss_to_db(name_of_db)
-
-# conn = sqlite3.connect('AA_db.sqlite')
-# df = pd.read_sql_query("SELECT * from `CNN NEWS FROM March 16, 2022`", conn)
-# conn.close()
