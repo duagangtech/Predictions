@@ -19,8 +19,8 @@ def get_data(database_name):
     conn.close()
     return df
 
-@st.cache
-def news_clustering(news_sentences, k_max = 5):
+@st.cache(allow_output_mutation=True)
+def news_clustering(news_sentences, k_max = 10):
     model = my_huggingface_model('sentence-transformers/all-mpnet-base-v2')
     s = np.array(news_sentences)
     x = model.encode(s)
@@ -44,6 +44,7 @@ def news_clustering(news_sentences, k_max = 5):
     
     return result
 
+
 if __name__ == "__main__":
     st.title('Daily Dashboard')
 
@@ -51,10 +52,14 @@ if __name__ == "__main__":
 
     my_data = get_data('all_data.db')['Full News']
 
-    st.write(my_data)
+    st.dataframe(my_data)
 
     my_cluster = news_clustering(my_data, 5)
 
     st.write(my_cluster)
 
-#;platform_system == "Windows"
+    st.write ("Test 2")
+
+    st.header("Customer quote")
+
+    st.markdown("> I just love to go home, no matter where I am - Alvee")

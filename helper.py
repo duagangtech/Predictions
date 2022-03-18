@@ -5,6 +5,9 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics import silhouette_score
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import regex as re
 
 model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 
@@ -48,3 +51,73 @@ def news_clustering(news_sentences, k_max = 5):
     return result
 
 
+# data_set =  
+
+def word_frequency(data_set, n, use_tfidf = False):
+    """
+    word_frequency takes a list of sentences as input and breaks them down to return the top n number of words in
+        data_set. If use_tf0df = True then tfid is used instead of just counting frequency of words
+    """
+    words, word_count = [], []
+    if use_tfidf:
+        vectorizer = TfidfVectorizer(stop_words='english').fit(data_set)
+    else:   
+        vectorizer = CountVectorizer(stop_words='english').fit(data_set)
+    
+    number_of_words = vectorizer.transform(data_set)
+    word_frequency = [(word, number_of_words[0,idx]) for word, idx in vectorizer.vocabulary_.items()]
+    word_frequency = sorted(word_frequency, key = lambda word_count: word_count[1], reverse = True)
+
+    for i, j in word_frequency[:n]:
+        words.append(i), word_count.append(j)
+    return words, word_count
+
+
+def get_word_viz(words, word_count):
+    #fig, ax = plt.subplots(figsize=(15, 10))
+    sns.set_theme(style="whitegrid")
+    sns.set(rc={"figure.figsize":(15, 8)})
+    sns.set(font_scale = 2),
+    p = sns.barplot(y = words, x=word_count, palette="Blues_d")
+    p.set(ylabel = "Words",
+     xlabel = "Word frequency",
+     title = "Most common words")
+
+#topic_1_news = result[result.topic_cluster == 1]
+
+def get_topic_pie_viz(news_data):
+    """
+    creates the pie chart for the topics
+    """
+    data = news_data.groupby(['topic_cluster']).count()['News']
+    number_of_topics = len(data)
+    labels = []
+    for i in range(1, number_of_topics + 1):
+        lbl = "Topic " + str(i) 
+        labels.append(lbl)
+    colors = sns.color_palette('pastel')[0:number_of_topics]
+    
+    #create pie chart
+    plt.pie(data, labels = labels, colors = colors, autopct='%.0f%%')
+    plt.show()
+    
+#get_topic_pie_viz(result)
+
+def get_hist_word_viz(dataset, feature_name):
+    fig, ax = plt.subplots(figsize = (15, 8))
+    ax.hist(dataset[feature_name], edgecolor="black", color="#69b3a2", alpha=0.3)
+    # Add title and axis names
+    plt.title('Total Words Per News Article')
+    plt.xlabel('Number of Words')
+    plt.ylabel('Frequency')
+
+
+def news_cleaner(news_string, is_it_for_BERT=False):
+    cleaned = re.sub(r"[^A-Za-z\s]+", " ", news_string)
+    cleaned = cleaned.replace("CNN News", "")
+    cleaned = cleaned.lower()
+    cleaned = " ".join(cleaned.split())
+    if is_it_for_BERT:
+        return cleaned
+    else:
+        pass
