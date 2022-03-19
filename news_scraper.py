@@ -184,6 +184,7 @@ def rss_to_db(database_name):
     # Save table to database
    # table_name = "Hirdyrts"
     data_news.drop_duplicates(subset=["Title","News_Link"])
+    data_news = data_news.sort_values(by='Date_Published')
     data_news.to_sql(name_of_table, db_connection, if_exists = 'append', index = False)
     # Close database
     db_connection.close()

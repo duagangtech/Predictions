@@ -11,3 +11,6 @@ feedparser
 #time
 bs4 
 regex
+plotly
+seaborn
+matplotlib

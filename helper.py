@@ -89,7 +89,7 @@ def get_topic_pie_viz(news_data):
     """
     creates the pie chart for the topics
     """
-    data = news_data.groupby(['topic_cluster']).count()['News']
+    data = news_data.groupby(['Topics']).count()['Title']
     number_of_topics = len(data)
     labels = []
     for i in range(1, number_of_topics + 1):
@@ -99,7 +99,8 @@ def get_topic_pie_viz(news_data):
     
     #create pie chart
     plt.pie(data, labels = labels, colors = colors, autopct='%.0f%%')
-    plt.show()
+    #plt.show()
+    return plt
     
 #get_topic_pie_viz(result)
 
@@ -121,3 +122,5 @@ def news_cleaner(news_string, is_it_for_BERT=False):
         return cleaned
     else:
         pass
+
+    
