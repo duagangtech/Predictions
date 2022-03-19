@@ -33,6 +33,7 @@ def get_data(database_name):
     df = pd.read_sql_query("SELECT * from CNN_News", conn)
     conn.close()
     df = df.sort_values(by='Date_Published')
+    df['date'] = pd.DatetimeIndex(df['Date_Published']).strftime('%Y-%m-%d %H:%M:%S')
     return df
 
 @st.cache
@@ -137,9 +138,6 @@ def pie_viz(df):
     st.pyplot(fig)
 
 
-my_data = get_data('all_data.db')
-
-
 
 ## Wordcloud
 def wordcloud_viz(words, word_count):
@@ -163,10 +161,13 @@ def wordcloud_viz(words, word_count):
     
     st.pyplot(fig)
 
-k = pd.DatetimeIndex(my_data['Date_Published']).strftime('%Y-%m-%d %H:%M:%S')
-my_data['date'] = k
 
 if __name__ == "__main__":
+    
+    my_data = get_data('all_data.db')
+    # k = pd.DatetimeIndex(my_data['Date_Published']).strftime('%Y-%m-%d %H:%M:%S')
+    # my_data['date'] = k
+
     st.title('Daily Dashboard')
     
     st.subheader('This is a live breakdown of the CNN news scrpaed from their website using BeautifulSoup and Feedparser. This updates automatically')
