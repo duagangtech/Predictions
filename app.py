@@ -3,10 +3,7 @@ from statistics import median
 from tracemalloc import start
 import streamlit as st
 import sqlite3
-#from sklearn.cluster import KMeans
 import numpy as np
-#from sentence_transformers import SentenceTransformer
-#from sklearn.metrics import silhouette_score
 import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -14,8 +11,6 @@ import seaborn as sns
 from helper import *
 import math
 from wordcloud import WordCloud
-
-# Using plotly.express
 import plotly.express as px
 
 st.set_page_config(
@@ -122,7 +117,6 @@ def timeseries(df):
 
 ## PieChart
 def pie_viz(df):
-#df = px.data.gapminder().query("year == 2007").query("continent == 'Americas'")
     fig, ax = plt.subplots(figsize = (10, 8))
     data = df.groupby(['Themes']).count()['Title']
     number_of_topics = len(data)
@@ -141,13 +135,9 @@ def pie_viz(df):
 
 ## Wordcloud
 def wordcloud_viz(words, word_count):
-
-    #words, word_count = word_frequency(data_set, 100, use_tfidf= True)
-    
+   
     df = pd.DataFrame({'word': words,
                    'count': word_count})
-
-    # method 2: convert to dict
     data = df.set_index('word').to_dict()['count'] 
 
     # Create and generate a word cloud image:
@@ -157,7 +147,6 @@ def wordcloud_viz(words, word_count):
     fig, ax = plt.subplots()
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
-    #plt.show()
     
     st.pyplot(fig)
 

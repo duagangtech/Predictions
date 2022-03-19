@@ -5,8 +5,6 @@ import feedparser
 import regex as re
 import sqlite3
 import time
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -76,12 +74,9 @@ def get_RSS_data (URL):
     for i in range(num_of_entries):
         Current_news = news_links[i]
         if remove_duplicate_links(old_url, Current_news.link):
-            #print('Check')
             if re.match(advertisement_check, Current_news.link):
                 pass
             else:
-                #print(Current_news.published)
-                #Current_news = news_links[i]
                 publish_date.append(Current_news.published)
                 news_title.append(Current_news.title)
                 sentence = Current_news.summary
@@ -107,12 +102,6 @@ def get_RSS_data (URL):
                     article_joined = article_joined.replace("(CNN)","")
                     full_news.append(article_joined.replace(u'\xa0', u' '))
         
-            # elif re.match(advertisement_check, Current_news.link):
-            #     publish_date =publish_date.append([])
-            #     news_title = news_title.append([])
-            #     news_summary = news_summary.append([])
-            #     news_link = news_link.append([])
-            #     full_news = full_news.append([])
                 elif re.match(article_check, Current_news.link):
                     r = requests.get(Current_news.link)
                     soup = BeautifulSoup(r.text, 'html.parser')
@@ -137,7 +126,6 @@ def get_RSS_data (URL):
                     news = news.replace("(CNN Business)","")
                     full_news.append(news.replace(u'\xa0', u' '))
     RSS_DF = pd.DataFrame({'Date_Published': publish_date, "Title": news_title, "Summary": news_summary, "News_Link": news_link,"Full News":full_news})
-        #RSS_DF = pd.concat([RSS_DF, temp_df],ignore_index= True, axis = 0)
     return RSS_DF, Current_df
 
 
@@ -193,12 +181,13 @@ def rss_to_db(database_name):
 
     # Cluster the News using this only if table is empty
     #data_news['Themes'] = news_clustering(data_news['Cleaned Full News'], k_max = 10)
-
+    
+    Current_df = Current_df.sort_values(by='Date_Published')
+    
     # Open Database
     db_connection = sqlite3.connect(database_name)
 
     # Save table to database
-   # table_name = "Hirdyrts"
     data_news.drop_duplicates(subset=["Title","News_Link"])
     data_news = data_news.sort_values(by='Date_Published')
     data_news.to_sql(name_of_table, db_connection, if_exists = 'append', index = False)
