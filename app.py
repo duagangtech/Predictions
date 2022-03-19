@@ -324,3 +324,9 @@ if __name__ == "__main__":
 
     with col2_themes:
         wordcloud_viz(words_themes, word_count_themes)
+
+st.subheader("News in each group")
+
+st.dataframe(theme_data[['Title','Summary', 'News_Link']])
+
+st.header("Coming Soon: Sentiment Analysis (Once I have a bit more data!)")
