@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import regex as re
+import contractions
 
 model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 
@@ -65,12 +66,14 @@ def word_frequency(data_set, n, use_tfidf = False):
         vectorizer = CountVectorizer(stop_words='english').fit(data_set)
     
     number_of_words = vectorizer.transform(data_set)
-    word_frequency = [(word, number_of_words[0,idx]) for word, idx in vectorizer.vocabulary_.items()]
+    word_agg = number_of_words.sum(axis = 0)
+    word_frequency = [(word, word_agg[0,idx]) for word, idx in vectorizer.vocabulary_.items()]
     word_frequency = sorted(word_frequency, key = lambda word_count: word_count[1], reverse = True)
 
     for i, j in word_frequency[:n]:
         words.append(i), word_count.append(j)
     return words, word_count
+
 
 
 def get_word_viz(words, word_count):
@@ -113,14 +116,17 @@ def get_hist_word_viz(dataset, feature_name):
     plt.ylabel('Frequency')
 
 
-def news_cleaner(news_string, is_it_for_BERT=False):
-    cleaned = re.sub(r"[^A-Za-z\s]+", " ", news_string)
+def news_cleaner(news_string):
+    cleaned_words = []
+    for word in news_string.split():
+        cleaned_words.append(contractions.fix(word))
+    cleaned = " ".join(cleaned_words)
+    cleaned = re.sub(r"[^A-Za-z\s]+", "", cleaned)
     cleaned = cleaned.replace("CNN News", "")
     cleaned = cleaned.lower()
     cleaned = " ".join(cleaned.split())
-    if is_it_for_BERT:
-        return cleaned
-    else:
-        pass
+    return cleaned
+
+
 
     
