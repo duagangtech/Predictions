@@ -170,7 +170,7 @@ if __name__ == "__main__":
 
     st.title('Daily Dashboard')
     
-    st.subheader('This is a live breakdown of the CNN news scrpaed from their website using BeautifulSoup and Feedparser. This updates automatically')
+    st.subheader('This is a live breakdown of the CNN news scraped from their website using BeautifulSoup and Feedparser. This updates automatically')
     
     st.write("")
     
@@ -293,8 +293,9 @@ if __name__ == "__main__":
 
         st.write("All the news articles can be divided into " + str(clusters) + " clusters")
 
-        st.write("""This was done using BERT Embeddings and KMeans Clustering. So all the news articles that are similar to each are
-        grouped into the same 'Topic' """)
+        st.write("""This was done using SentenceTransformers from the HuggingFace Library that produces BERT embeddings for the sentences from each news article. Once the 
+        sentence embeddings were extracted, KMeans Clustering was used to group the similar news articles together. So all the news articles that are similar to each are
+        grouped into the same 'Topic'.""")
 
 
     st.subheader("We can check out all the news in each group")
