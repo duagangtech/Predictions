@@ -27,7 +27,7 @@ def get_data(database_name):
     conn = sqlite3.connect(database_name)
     df = pd.read_sql_query("SELECT * from CNN_News", conn)
     conn.close()
-    df = df.sort_values(by='Date_Published')
+    #df = df.sort_values(by='Date_Published')
     df['date'] = pd.DatetimeIndex(df['Date_Published']).strftime('%Y-%m-%d %H:%M:%S')
     return df
 
@@ -171,7 +171,7 @@ if __name__ == "__main__":
 
     col1.metric("Total News Collected", str(total_news))
     col2.metric("Total Number of Themes/Cluster", str(clusters))
-    col3.metric("Last Updated", time_now.strftime("%Y-%m-%d"), time_now.strftime("%H:%M") + " Local Time")
+    col3.metric("Last Updated", time_now.strftime("%Y-%m-%d"), time_now.strftime("%H:%M") + " EDT")
     
     #######################################################################################################################
 
