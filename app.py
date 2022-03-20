@@ -83,7 +83,7 @@ def cleaner_nlp(data_set, feature_name):
     summary = data_set[feature_name].apply(lambda x: news_cleaner(x))
     return summary
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def filter_themes(data_to_filter, user_input):
     result = data_to_filter['Themes'] == user_input
     return data_to_filter[result]
