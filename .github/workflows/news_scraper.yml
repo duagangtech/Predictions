@@ -2,9 +2,9 @@ name: Automatic news scraper
 
 # When will the action run
 on:
-  schedule:
-    - cron: "*/5 * * * *"
-
+  push:
+    branches: main
+    
 jobs:
   build:
     runs-on: ubuntu-latest
