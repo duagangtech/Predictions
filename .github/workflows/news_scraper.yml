@@ -2,8 +2,8 @@ name: Automatic news scraper
 
 # When will the action run
 on:
-  schedule:
-    - cron: "0 */5 * * *"
+  push:
+    branches: main
 
 jobs:
   build:
@@ -26,12 +26,13 @@ jobs:
       - name: execute py script 
         run: python news_scraper.py
           
-      - name: commit files
+      # Add new files in data folder, commit along with other modified files, push
+      - name: Commit files
         run: |
           git config --local user.name github-actions
           git config --local user.email "actions@github.com"
           git pull origin main
-          git add -A
+          git add --all
           git commit -am "GH ACTION Autorun $(date)"
           git push origin main
         env:
