@@ -1,3 +1,4 @@
+from email import message
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
@@ -9,12 +10,17 @@ from sklearn.cluster import KMeans
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics import silhouette_score
+from datetime import datetime
 
 
 # Variables
 name_of_db = 'all_data.db'
 CNN_RSS_URL = "http://rss.cnn.com/rss/cnn_latest.rss"
 name_of_table = "CNN_News"
+
+# time now
+time_now = datetime.now()
+scrape_time = time_now.strftime("%Y-%m-%d") + " " + time_now.strftime("%H:%M")
 
 # Embedding model
 model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
@@ -135,7 +141,6 @@ def get_RSS_data (URL):
     RSS_DF = pd.DataFrame({'Date_Published': publish_date, "Title": news_title, "Summary": news_summary, "News_Link": news_link,"Full News":full_news})
     return RSS_DF, Current_df
 
-
 def news_clustering(news_sentences, k_max = 10):
     s = np.array(news_sentences)
     x = model.encode(s)
@@ -198,6 +203,18 @@ def rss_to_db(database_name):
     data_news.drop_duplicates(subset=["Title","News_Link"])
     data_news = data_news.sort_values(by='Date_Published')
     data_news.to_sql(name_of_table, db_connection, if_exists = 'append', index = False)
+
+    message = str(data_news.shape[0]) + " News Articles Added"
+
+    # Keep track of Changes
+    try:
+        change_log = pd.DataFrame({'Date': scrape_time, "Title": [message]})
+        Current_log = pd.read_sql_query("SELECT * from Change_log", db_connection)
+        change_log_df = pd.concat([Current_log, change_log],ignore_index= True, axis = 0)
+    except:
+        change_log_df = pd.DataFrame({'Date': scrape_time, "Title": [message]})
+    change_log_df.to_sql('Change_log', db_connection, if_exists = 'append', index = False)
+
     # Close database
     db_connection.close()
 
