@@ -39,12 +39,12 @@ jobs:
       #     branch: main  
 
       - name: Commit files
-      run: |
-        git config --local user.name github-actions
-        git config --local user.email "actions@github.com"
-        git add .
-        git commit -am "GH ACTION Autorun $(date)"
-        git push origin main
-      env:
-        REPO_KEY: ${{secrets.GITHUB_TOKEN}}
-        username: github-actions
+        run: |
+          git config --local user.name github-actions
+          git config --local user.email "actions@github.com"
+          git add .
+          git commit -am "GH ACTION Autorun $(date)"
+          git push origin main
+        env:
+          REPO_KEY: ${{secrets.GITHUB_TOKEN}}
+          username: github-actions
