@@ -296,7 +296,7 @@ if __name__ == "__main__":
      Topics)
         user_input = int(theme_choose[6:]) - 1
         theme_data = filter_themes(my_data,user_input)
-        words_themes, word_count_themes = word_frequency(cleaner_nlp(theme_data,'Full News'), 100, use_tfidf= True)
+        words_themes, word_count_themes = word_frequency(theme_data['Cleaned Full News'], 100, use_tfidf= True)
     
     longest,shortest, mean_len, median_len, std_len = get_news_length_metric(theme_data)
 
