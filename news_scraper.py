@@ -116,15 +116,22 @@ def get_RSS_data (URL):
                     full_news.append(article_joined.replace(u'\xa0', u' '))
 
                 else:
-                    r = requests.get(Current_news.link)
-                    soup = BeautifulSoup(r.text, 'html.parser')
-                    regex_exp = re.compile('.*zn zn-body-text zn-body zn--idx-0 zn--ordinary.*')
-                    news = soup.find('section', {"class": regex_exp}).text
-                    news = news.replace("(CNN)","")
-                    news = news.replace("Sign up for CNN's Wonder Theory science newsletter. Explore the universe with news on fascinating discoveries, scientific advancements and more.","")
-                    news = news.lstrip()
-                    news = news.replace("(CNN Business)","")
-                    full_news.append(news.replace(u'\xa0', u' '))
+                    #print(Current_news.link)
+                    try:
+                        r = requests.get(Current_news.link)
+                        soup = BeautifulSoup(r.text, 'html.parser')
+                        regex_exp = re.compile('.*zn zn-body-text zn-body zn--idx-0 zn--ordinary.*')
+                        news = soup.find('section', {"class": regex_exp}).text
+                        news = news.replace("(CNN)","")
+                        news = news.replace("Sign up for CNN's Wonder Theory science newsletter. Explore the universe with news on fascinating discoveries, scientific advancements and more.","")
+                        news = news.lstrip()
+                        news = news.replace("(CNN Business)","")
+                        full_news.append(news.replace(u'\xa0', u' '))
+                    except:
+                        publish_date.pop()
+                        news_title.pop()
+                        news_summary.pop()
+                        news_link.pop()
     RSS_DF = pd.DataFrame({'Date_Published': publish_date, "Title": news_title, "Summary": news_summary, "News_Link": news_link,"Full News":full_news})
     return RSS_DF, Current_df
 
