@@ -171,7 +171,7 @@ if __name__ == "__main__":
 
     col1.metric("Total News Collected", str(total_news))
     col2.metric("Total Number of Themes/Cluster", str(clusters))
-    col3.metric("Last Updated", time_now.strftime("%Y-%m-%d"), time_now.strftime("%H:%M") + " EDT")
+    col3.metric("Last Updated", time_now.strftime("%Y-%m-%d"), time_now.strftime("%H:%M") + " UTC")
     
     #######################################################################################################################
 
