@@ -1,8 +1,8 @@
 name: CNN_scraper
 
-on: push
-  # schedule:
-  #   - cron: '0 12 * * *' # runs at 12:00 UTC everyday
+on:
+  push:
+    branches: main
 
 jobs:
   build:
@@ -29,6 +29,7 @@ jobs:
         run: |
           git config --local user.name github-actions
           git config --local user.email "actions@github.com"
+          git pull origin main
           git add .
           git commit -m "GH ACTION Autorun $(date)"
           git push origin main
