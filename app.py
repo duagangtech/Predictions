@@ -147,7 +147,7 @@ def wordcloud_viz(words, word_count):
     fig, ax = plt.subplots()
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
-    
+    #
     st.pyplot(fig)
 
 
