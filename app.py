@@ -22,7 +22,6 @@ st.set_page_config(
 # Variables
 name_of_db = 'all_data.db'
 
-@st.cache(allow_output_mutation=True)
 def get_data(database_name):
     conn = sqlite3.connect(database_name)
     df = pd.read_sql_query("SELECT * from CNN_News", conn)
