@@ -27,7 +27,7 @@ def get_data(database_name):
     conn = sqlite3.connect(database_name)
     df = pd.read_sql_query("SELECT * from CNN_News", conn)
     conn.close()
-    #df = df.sort_values(by='Date_Published')
+    df = df.sort_values(by='Date_Published')
     df['date'] = pd.DatetimeIndex(df['Date_Published']).strftime('%Y-%m-%d %H:%M:%S')
     return df
 
