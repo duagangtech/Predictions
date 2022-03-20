@@ -1,4 +1,4 @@
-name: scraper-san-juan-gobierno
+name: CNN_scraper
 
 on: push
   # schedule:
@@ -25,15 +25,32 @@ jobs:
       - name: execute py script # run sj-gobierno.py to get the latest data
         run: python news_scraper.py
           
-      - name: commit files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          git commit -m "update data" -a
+      # - name: commit files
+      #   run: |
+      #     git config --local user.email "action@github.com"
+      #     git config --local user.name "GitHub Action"
+      #     git add -A
+      #     git commit -m "update data" -a
           
+      # - name: push changes
+      #   uses: ad-m/github-push-action@v0.6.0
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: main  
+
+      - name: Commit files
+      run: |
+        git config --local user.name github-actions
+        git config --local user.email "actions@github.com"
+        git add -A
+        git commit -am "Auto Scrape $(date)"
+      #   git push origin main
+      # env:
+      #   REPO_KEY: ${{secrets.GITHUB_TOKEN}}
+      #   username: github-actions
+
       - name: push changes
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main  
+         uses: ad-m/github-push-action@v0.6.0
+         with:
+           github_token: ${{ secrets.GITHUB_TOKEN }}
+           branch: main
