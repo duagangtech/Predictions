@@ -316,21 +316,33 @@ if __name__ == "__main__":
 
     st.subheader("Quick Breakdown of Common themes for All News")
 
-    st.subheader("Overview")
-
-    st.write("All the news articles can be divided into " + str(clusters) + " clusters")
-
     st.write("""This was done using SentenceTransformers from the HuggingFace Library that produces BERT embeddings for the sentences from each news article. Once the 
         sentence embeddings were extracted, KMeans Clustering was used to group the similar news articles together. So all the news articles that are similar to each are
         grouped into the same 'Topic'.""")
+
+    col0, col1, col2 = st.columns([1, 2, 1])
+
+    with col1:
+
+        option_pie = st.selectbox('Choose a date to filter by:', date_option, key=3331)
+
+        st.subheader("Overview")
+
+        st.subheader("All the news articles can be divided into " + str(max(cluster_dict[option_pie]) + 1) + " clusters")
+
+        summary_data_by_date_pie = filter_by_date(my_data, option_pie)
+        st.subheader("Theme Breakdown for " + str(option_pie))
+        pie_viz(summary_data_by_date_pie)
+
+    #with col2:
+        # st.subheader("Overview")
         
-    st.subheader("We can check out all the news in each group and filter by both the date posted and group")
+    st.subheader("We can finally check out all the news in each group and filter by both the date posted and group")
 
     # Cluster my news into groups
     #summary_data_by_date['Themes'] = 
     # cluster_news(summary_data_by_date, 'Full News')
 
-    st.write ("We can check out all the news in each group")
 
     option_4 = st.selectbox('Choose a date to filter by:', date_option, key=31)
     
@@ -366,19 +378,16 @@ if __name__ == "__main__":
     col1_themes, col2_themes = st.columns([1, 1])
     
     with col1_themes.container():
+        st.subheader("Here are the most important words from all news from " + str(option_4) + "and Topic " + str(max(cluster_dict[option_4]) + 1))
         linePlot(words_themes[:15], word_count_themes[:15])
 
     with col2_themes:
+        st.subheader("A visual summary of the important words from all news from " + str(option_4) + " and Topic " + str(max(cluster_dict[option_4]) + 1))
         wordcloud_viz(words_themes, word_count_themes)
 
-    col1, col2 = st.columns([1, 1])
-
-    with col1:
-        st.subheader("Theme Breakdown for " + str(option_4))
-        pie_viz(summary_data_by_date)
-
-    with col2:
-        st.dataframe(theme_data[['Title','Summary', 'News_Link']])
+    st.subheader("Here are the news for " + str(option_4) + " and Topic " + str(max(cluster_dict[option_4]) + 1))
+    
+    st.table(theme_data[['Title','Summary', 'News_Link']])
 
 st.write("")
 st.header("Coming Soon: Sentiment Analysis (Once I have a bit more data!)")
