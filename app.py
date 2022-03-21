@@ -1,6 +1,7 @@
 from functools import cache
 from statistics import median
 from tracemalloc import start
+from pyparsing import col
 from sklearn import cluster
 import streamlit as st
 import sqlite3
@@ -322,18 +323,6 @@ if __name__ == "__main__":
     st.write("""This was done using SentenceTransformers from the HuggingFace Library that produces BERT embeddings for the sentences from each news article. Once the 
         sentence embeddings were extracted, KMeans Clustering was used to group the similar news articles together. So all the news articles that are similar to each are
         grouped into the same 'Topic'.""")
-
-    col1, col2 = st.columns([1, 1])
-
-    with col1:
-        option_4 = st.selectbox('Choose a date to filter by:', date_option, key=31)
-    
-        summary_data_by_date = filter_by_date(my_data, option_4)
-
-    with col2:
-        st.subheader("Summary for " + str(option_4))
-        pie_viz(summary_data_by_date)
-
         
     st.subheader("We can check out all the news in each group and filter by both the date posted and group")
 
@@ -342,6 +331,10 @@ if __name__ == "__main__":
     # cluster_news(summary_data_by_date, 'Full News')
 
     st.write ("We can check out all the news in each group")
+
+    option_4 = st.selectbox('Choose a date to filter by:', date_option, key=31)
+    
+    summary_data_by_date = filter_by_date(my_data, option_4)
 
     col1, col2 = st.columns([1, 1])
     summary_data_by_date['Themes'] = cluster_dict[option_4]
@@ -378,9 +371,14 @@ if __name__ == "__main__":
     with col2_themes:
         wordcloud_viz(words_themes, word_count_themes)
 
-    st.subheader("News in each group")
+    col1, col2 = st.columns([1, 1])
 
-    st.dataframe(theme_data[['Title','Summary', 'News_Link']])
+    with col1:
+        st.subheader("Theme Breakdown for " + str(option_4))
+        pie_viz(summary_data_by_date)
+
+    with col2:
+        st.dataframe(theme_data[['Title','Summary', 'News_Link']])
 
 st.write("")
 st.header("Coming Soon: Sentiment Analysis (Once I have a bit more data!)")
