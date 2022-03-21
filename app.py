@@ -187,7 +187,7 @@ with st.spinner('Clustering the news...Almost There!!'):
     # Apply only once
     cluster_dict = cluster_filter(my_data)
 
-my_data['Themes'] = cluster_dict["All"]
+my_data['Themes'] = cluster_dict["All"].values()
 
 if __name__ == "__main__":
     
