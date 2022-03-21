@@ -1,4 +1,4 @@
-streamlit==0.79.0
+streamlit
 #transformers
 tensorflow
 requests
