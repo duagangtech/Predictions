@@ -28,12 +28,11 @@ def fun_tf (news_sentences):
     new_matrix = tf_vectorizer.fit_transform(news)
     return new_matrix
 
-def news_clustering(news_sentences, k_max = 5):
+def news_clustering(news_sentences, k_max = 10):
     s = np.array(news_sentences)
     x = model.encode(s)
     sil = []
-    #k_max = 5
-
+    
     for k in range(2, k_max+1):
         km = KMeans(n_clusters= k, init = 'random', n_init = 10, max_iter= 300, tol= 1e-04, random_state= 123)
         y_km = km.fit(x)
@@ -45,11 +44,7 @@ def news_clustering(news_sentences, k_max = 5):
 
     y_km = km.fit_predict(x)
 
-    # y_km
-
-    result = pd.DataFrame({'News': news_sentences, 'topic_cluster': y_km})
-    
-    return result
+    return y_km
 
 
 # data_set =  
@@ -126,6 +121,7 @@ def news_cleaner(news_string):
     cleaned = cleaned.lower()
     cleaned = " ".join(cleaned.split())
     return cleaned
+
 
 
 

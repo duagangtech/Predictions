@@ -22,10 +22,6 @@ name_of_table = "CNN_News"
 time_now = datetime.now()
 scrape_time = time_now.strftime("%Y-%m-%d") + " " + time_now.strftime("%H:%M")
 
-# Embedding model
-model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
-
-
 def remove_duplicate_links(link_list, new_url):
     """
     remove_duplicate(old_url, new_url) return True if new_url is already in link_list and False otherwise
@@ -62,7 +58,6 @@ def get_RSS_data (URL):
         conn.close()
     except:
         old_url = []
-        Current_df = pd.DataFrame(columns = ["Date_Published", "Title", "Summary", "News_Link", "Full News"])
 
     RSS_DF = pd.DataFrame(columns = ["Date_Published", "Title", "Summary", "News_Link", "Full News"])
     NewsFeed = feedparser.parse(URL)
@@ -75,7 +70,7 @@ def get_RSS_data (URL):
     live_news_check = re.compile('.*live-news.*')
     article_check = re.compile('.*/article/.*')
     advertisement_check = re.compile('.*cnn-underscored.*')
-    business_check = re.compile('.*business.*')
+    #business_check = re.compile('.*business.*')
     full_news = []
     for i in range(num_of_entries):
         Current_news = news_links[i]
@@ -139,81 +134,31 @@ def get_RSS_data (URL):
                         news_summary.pop()
                         news_link.pop()
     RSS_DF = pd.DataFrame({'Date_Published': publish_date, "Title": news_title, "Summary": news_summary, "News_Link": news_link,"Full News":full_news})
-    return RSS_DF, Current_df
-
-def news_clustering(news_sentences, k_max = 10):
-    s = np.array(news_sentences)
-    x = model.encode(s)
-    sil = []
-    
-    for k in range(2, k_max+1):
-        km = KMeans(n_clusters= k, init = 'random', n_init = 10, max_iter= 300, tol= 1e-04, random_state= 123)
-        y_km = km.fit(x)
-        label = y_km.labels_
-        sil.append(silhouette_score(x, label, metric = 'euclidean'))
-    optimal_k = sil.index(max(sil)) + 1
-    
-    km = KMeans(n_clusters= optimal_k, init = 'random', n_init = 10, max_iter= 300, tol= 1e-04, random_state= 123)
-
-    y_km = km.fit_predict(x)
-
-    return y_km
-
-def news_cleaner(news_string):
-    cleaned = re.sub(r"[^A-Za-z\s]+", "", news_string)
-    cleaned = cleaned.replace("CNN News", "")
-    cleaned = cleaned.lower()
-    cleaned = " ".join(cleaned.split())
-    return cleaned
+    return RSS_DF
 
 
 def rss_to_db(database_name):
     # Get new data if available
-    data_news, Current_df = get_RSS_data(CNN_RSS_URL)
-
-    # Cleaning
-    data_news['Cleaned Full News'] = data_news['Full News'].apply(lambda x: news_cleaner(x))
-
-    # Cleaning 
-    #Current_df['Cleaned Full News'] = Current_df['Full News'].apply(lambda x: news_cleaner(x, True))
+    data_news = get_RSS_data(CNN_RSS_URL)
 
     # Feature Engineering
     data_news['time_posted'] = pd.DatetimeIndex(data_news['Date_Published']).strftime('%H:%M:%S GMT')
     data_news['Date_posted'] = pd.DatetimeIndex(data_news['Date_Published']).strftime('%Y-%m-%d')
     data_news['Length of post'] = data_news['Full News'].apply(lambda x:len(x.split(" ")))
-
-    # Add Theme Column 
-    data_news['Themes'] = np.zeros(data_news.shape[0])
-
-    # Add to existing data
-    Current_df = pd.concat([Current_df, data_news],ignore_index= True, axis = 0)
-
-    # Cluster the News
-    Current_df['Themes'] = news_clustering(Current_df['Cleaned Full News'], k_max = 10)
-
-    # Cluster the News using this only if table is empty
-    #data_news['Themes'] = news_clustering(data_news['Cleaned Full News'], k_max = 10)
-    
-    Current_df = Current_df.sort_values(by='Date_Published')
     
     # Open Database
     db_connection = sqlite3.connect(database_name)
 
     # Save table to database
-    data_news.drop_duplicates(subset=["Title","News_Link"])
-    data_news = data_news.sort_values(by='Date_Published')
+    data_news.sort_values(by = 'Date_Published', inplace = True)
     data_news.to_sql(name_of_table, db_connection, if_exists = 'append', index = False)
 
     message = str(data_news.shape[0]) + " News Articles Added"
 
     # Keep track of Changes
-    try:
-        change_log = pd.DataFrame({'Date': scrape_time, "Title": [message]})
-        Current_log = pd.read_sql_query("SELECT * from Change_log", db_connection)
-        change_log_df = pd.concat([Current_log, change_log],ignore_index= True, axis = 0)
-    except:
-        change_log_df = pd.DataFrame({'Date': scrape_time, "Title": [message]})
-    change_log_df.to_sql('Change_log', db_connection, if_exists = 'append', index = False)
+    #try:
+    change_log = pd.DataFrame({'Date': scrape_time, "Title": [message]})
+    change_log.to_sql('Change_log', db_connection, if_exists = 'append', index = False)
 
     # Close database
     db_connection.close()

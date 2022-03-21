@@ -1,6 +1,7 @@
 from functools import cache
 from statistics import median
 from tracemalloc import start
+from sklearn import cluster
 import streamlit as st
 import sqlite3
 import numpy as np
@@ -12,6 +13,7 @@ from helper import *
 import math
 from wordcloud import WordCloud
 import plotly.express as px
+
 
 st.set_page_config(
      page_title="CNN News Dashboard",
@@ -133,7 +135,8 @@ def pie_viz(df):
 
 
 ## Wordcloud
-def wordcloud_viz(words, word_count):
+@st.cache(allow_output_mutation=True)
+def wordclouds(words, word_count):
    
     df = pd.DataFrame({'word': words,
                    'count': word_count})
@@ -141,20 +144,58 @@ def wordcloud_viz(words, word_count):
 
     # Create and generate a word cloud image:
     wordcloud = WordCloud(width = 600, height = 400, colormap="Blues", margin= 1, max_words=200).generate_from_frequencies(data)
+    return wordcloud
 
+def wordcloud_viz(words, word_count):
     # Display the generated image:
     fig, ax = plt.subplots()
+
+    wordcloud = wordclouds(words, word_count)
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
     #
     st.pyplot(fig)
 
+## Theme Clustering
+
+@st.cache(allow_output_mutation=True)
+def cluster_news (dataset, feature_to_cluster):
+    """
+    dataset -> pandas Dataframe
+    feature_to_cluster -> string
+    """
+    k = 10
+    themes = news_clustering(dataset[feature_to_cluster], k_max = k)
+    return themes
+
+my_data = get_data('all_data.db')
+
+#my_data['Themes'] = cluster_news(my_data, 'Full News')
+
+@st.cache(allow_output_mutation=True)
+def cluster_filter(dataset):
+    my_dates = np.array(dataset['Date_posted'].unique())
+    date_option = np.append("All", my_dates)
+    new_dict = {}
+    for i in date_option:
+        new_data = filter_by_date(dataset, i)
+        theme = cluster_news(new_data, 'Full News')
+        new_dict[i] = theme
+    return new_dict
+
+with st.spinner('Clustering the news...Almost There!!'):
+    # Apply only once
+    cluster_dict = cluster_filter(my_data)
+
+my_data['Themes'] = cluster_dict["All"]
 
 if __name__ == "__main__":
     
-    my_data = get_data('all_data.db')
+    #my_data = get_data('all_data.db')
     # k = pd.DatetimeIndex(my_data['Date_Published']).strftime('%Y-%m-%d %H:%M:%S')
     # my_data['date'] = k
+
+    # Cluster my news into groups
 
     st.title('Daily Dashboard')
     
@@ -191,7 +232,8 @@ if __name__ == "__main__":
 
     st.table(my_data[['Date_Published','Title','Summary']].tail(10))
 
-    with st.expander("Inorder to view all the news along with the full article Click me!"):
+    with st.expander("Inorder to view all the news Click me!"):
+        st.write("Including the full news article made the table hard to read, so I included the news link instead")
         st.dataframe(my_data[['Date_Published','Title','Summary', 'Full News', 'News_Link']])
             
 
@@ -267,9 +309,9 @@ if __name__ == "__main__":
     
     
     ########################################## Cluster Documents #####################################################
-    st.header("Clustering news that are simialr to each other to get common themes")
+    st.header("Clustering news that are simialar to each other to get common themes")
 
-    st.subheader("Quick Breakdown of Common themes")
+    st.subheader("Quick Breakdown of Common themes for All News")
 
     col1, col2 = st.columns([1, 1])
 
@@ -285,20 +327,37 @@ if __name__ == "__main__":
         sentence embeddings were extracted, KMeans Clustering was used to group the similar news articles together. So all the news articles that are similar to each are
         grouped into the same 'Topic'.""")
 
+    st.subheader("We can check out all the news in each group and filter by both the date posted and group")
 
-    st.subheader("We can check out all the news in each group")
+    option_4 = st.selectbox('Choose a date to filter by:', date_option, key=31)
+    
+    summary_data_by_date = filter_by_date(my_data, option_4)
+
+    # Cluster my news into groups
+    #summary_data_by_date['Themes'] = 
+    # cluster_news(summary_data_by_date, 'Full News')
+
+    st.write ("We can check out all the news in each group")
 
     col1, col2 = st.columns([1, 1])
-
+    summary_data_by_date['Themes'] = cluster_dict[option_4]
+    clusters_filtered, time_now_filtered, total_news_filtered, Topics_filtered = get_metric(summary_data_by_date)
+    
     with col1:
         theme_choose = st.radio(
      "Check out News for each group",
-     Topics)
+     Topics_filtered)
+
         user_input = int(theme_choose[6:]) - 1
-        theme_data = filter_themes(my_data,user_input)
-        words_themes, word_count_themes = word_frequency(theme_data['Cleaned Full News'], 100, use_tfidf= True)
-    
-    longest,shortest, mean_len, median_len, std_len = get_news_length_metric(theme_data)
+
+        theme_data = filter_themes(summary_data_by_date, user_input)
+        try:
+            words_themes, word_count_themes = word_frequency(cleaner_nlp(theme_data, "Full News"), 100, use_tfidf= True)
+        except:
+            # Bug needs to be fixed!
+            words_themes, word_count_themes = word_frequency(cleaner_nlp(theme_data, "Summary"), 100, use_tfidf= True)
+
+    longest, shortest, mean_len, median_len, std_len = get_news_length_metric(theme_data)
 
     col2.subheader("Summary")
     col2.write("Here we can see that the longest news has " + str(longest) + " words")
