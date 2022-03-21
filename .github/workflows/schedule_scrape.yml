@@ -1,8 +1,8 @@
 name: CNN_scraper
 
-on: push
-  # schedule:
-  #   - cron: '0 */6 * * *' # runs at every 6 hours
+on:
+  schedule:
+    - cron: '0 */6 * * *' # runs at every 6 hours
 
 jobs:
   build:
