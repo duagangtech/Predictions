@@ -19,12 +19,8 @@ import plotly.express as px
 st.set_page_config(
      page_title="CNN News Dashboard",
      page_icon= "🐙",
-     layout="wide",
-     backgroundColor = "#ab5555" 
+     layout="wide", 
  )
-
-CURRENT_THEME = "light"
-IS_DARK_THEME = False
 
 # Variables
 name_of_db = 'all_data.db'
