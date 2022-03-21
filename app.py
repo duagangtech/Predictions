@@ -30,6 +30,7 @@ def get_data(database_name):
     conn.close()
     df = df.sort_values(by='Date_Published')
     df['date'] = pd.DatetimeIndex(df['Date_Published']).strftime('%Y-%m-%d %H:%M:%S')
+    df = df.sort_values(by='date')
     return df
 
 @st.cache
