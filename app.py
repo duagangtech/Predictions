@@ -188,7 +188,7 @@ with st.spinner('Clustering the news...Almost There!!'):
     cluster_dict = cluster_filter(my_data)
 
 # Error tbw
-my_data['Themes'] = cluster_dict["All"].values()
+my_data['Themes'] = cluster_dict["All"]
 
 if __name__ == "__main__":
     

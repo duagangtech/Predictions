@@ -2,7 +2,7 @@ name: CNN_scraper
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # runs at 12:00 UTC everyday
+    - cron: '0 */6 * * *' # runs at every 6 hours
 
 jobs:
   build:
@@ -29,9 +29,9 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git pull origin main    
           git add -A
           git commit -m "update data" -a
-          
       - name: push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
