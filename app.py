@@ -326,13 +326,14 @@ if __name__ == "__main__":
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        st.subheader("Summary for " + str(option_4))
-        pie_viz(summary_data_by_date)
-
-    with col2:
         option_4 = st.selectbox('Choose a date to filter by:', date_option, key=31)
     
         summary_data_by_date = filter_by_date(my_data, option_4)
+
+    with col2:
+        st.subheader("Summary for " + str(option_4))
+        pie_viz(summary_data_by_date)
+
         
     st.subheader("We can check out all the news in each group and filter by both the date posted and group")
 
