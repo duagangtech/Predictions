@@ -185,7 +185,7 @@ def cluster_filter(dataset):
         new_dict[i] = theme
     return new_dict
 
-with st.spinner('Clustering the news...Almost There!!'):
+with st.spinner('App is Currently Updating after receiving new data!!'):
     # Apply only once
     cluster_dict = cluster_filter(my_data)
 
@@ -312,7 +312,7 @@ if __name__ == "__main__":
     
     
     ########################################## Cluster Documents #####################################################
-    st.header("Clustering news that are simialar to each other to get common themes")
+    st.header("Clustering news that are similar to each other to get common themes")
 
     st.subheader("Quick Breakdown of Common themes for All News")
 
