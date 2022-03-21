@@ -19,8 +19,12 @@ import plotly.express as px
 st.set_page_config(
      page_title="CNN News Dashboard",
      page_icon= "🐙",
-     layout="wide"
+     layout="wide",
+     backgroundColor = "#ab5555" 
  )
+
+CURRENT_THEME = "light"
+IS_DARK_THEME = False
 
 # Variables
 name_of_db = 'all_data.db'
@@ -213,7 +217,7 @@ if __name__ == "__main__":
     clusters, time_now, total_news, Topics = get_metric(my_data)
 
     col1.metric("Total News Collected", str(total_news))
-    col2.metric("Total Number of Themes/Cluster", str(clusters))
+    col2.metric("Total Number of Themes/Cluster for all news", str(clusters))
     col3.metric("Last Updated", time_now.strftime("%Y-%m-%d"), time_now.strftime("%H:%M") + " UTC")
     
     #######################################################################################################################
