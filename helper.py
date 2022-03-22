@@ -34,7 +34,7 @@ def news_clustering(news_sentences, k_max = 15):
     sil = []
     
     for k in range(2, k_max+1):
-        km = KMeans(n_clusters= k, init = 'random', n_init = 15, max_iter= 500, tol= 1e-04, random_state= 123)
+        km = KMeans(n_clusters= k, init = 'random', n_init = 10, max_iter= 500, tol= 1e-04, random_state= 123)
         y_km = km.fit(x)
         label = y_km.labels_
         try:

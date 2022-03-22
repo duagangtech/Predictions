@@ -372,7 +372,7 @@ if __name__ == "__main__":
     col1_themes, col2_themes = st.columns([1, 1])
     
     with col1_themes.container():
-        st.subheader("Here are the most important words from all news from " + str(option_4) + "and Topic " + str(max(cluster_dict[option_4]) + 1))
+        st.subheader("Here are the most important words from all news from " + str(option_4) + " and Topic " + str(max(cluster_dict[option_4]) + 1))
         linePlot(words_themes[:15], word_count_themes[:15])
 
     with col2_themes:
