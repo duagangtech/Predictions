@@ -166,7 +166,7 @@ def cluster_news (dataset, feature_to_cluster):
     dataset -> pandas Dataframe
     feature_to_cluster -> string
     """
-    k = 10
+    k = 15
     themes = news_clustering(dataset[feature_to_cluster], k_max = k)
     return themes
 

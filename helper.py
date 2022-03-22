@@ -28,16 +28,20 @@ def fun_tf (news_sentences):
     new_matrix = tf_vectorizer.fit_transform(news)
     return new_matrix
 
-def news_clustering(news_sentences, k_max = 10):
+def news_clustering(news_sentences, k_max = 15):
     s = np.array(news_sentences)
     x = model.encode(s)
     sil = []
     
     for k in range(2, k_max+1):
-        km = KMeans(n_clusters= k, init = 'random', n_init = 10, max_iter= 300, tol= 1e-04, random_state= 123)
+        km = KMeans(n_clusters= k, init = 'random', n_init = 15, max_iter= 500, tol= 1e-04, random_state= 123)
         y_km = km.fit(x)
         label = y_km.labels_
-        sil.append(silhouette_score(x, label, metric = 'euclidean'))
+        try:
+            sil.append(silhouette_score(x, label, metric = 'euclidean'))
+        except:
+            print("This label is problematic: " + str(label) + "for this dataset: " + str(x))
+            break
     optimal_k = sil.index(max(sil)) + 1
     
     km = KMeans(n_clusters= optimal_k, init = 'random', n_init = 10, max_iter= 300, tol= 1e-04, random_state= 123)
