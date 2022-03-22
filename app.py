@@ -25,6 +25,7 @@ st.set_page_config(
 # Variables
 name_of_db = 'all_data.db'
 
+@st.experimental_singleton
 def get_data(database_name):
     conn = sqlite3.connect(database_name)
     df = pd.read_sql_query("SELECT * from CNN_News", conn)
@@ -160,7 +161,7 @@ def wordcloud_viz(words, word_count):
 
 ## Theme Clustering
 
-@st.cache(allow_output_mutation=True)
+@st.experimental_singleton
 def cluster_news (dataset, feature_to_cluster):
     """
     dataset -> pandas Dataframe
@@ -283,7 +284,7 @@ if __name__ == "__main__":
 
     st.subheader("Title and Summary Analysis")   
 
-    col_hist, col_cloud = st.columns([3, 1])
+    col_cloud, col_hist = st.columns([1, 3])
 
     with col_cloud:
         option_2 = st.selectbox('Choose a date to filter by:', date_option, key=123)
