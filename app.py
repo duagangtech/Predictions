@@ -26,8 +26,8 @@ st.set_page_config(
 name_of_db = 'all_data.db'
 
 @st.experimental_singleton
-def get_data(database_name):
-    conn = sqlite3.connect(database_name)
+def get_data(_database_name):
+    conn = sqlite3.connect(_database_name)
     df = pd.read_sql_query("SELECT * from CNN_News", conn)
     conn.close()
     df = df.sort_values(by='Date_Published')
@@ -35,7 +35,7 @@ def get_data(database_name):
     df = df.sort_values(by='date')
     return df
 
-@st.cache
+@st.experimental_memo
 def get_metric(dataset):
 
     #Total Cluster
@@ -57,7 +57,7 @@ def get_metric(dataset):
     return number_of_clusters, now, total, labels
 
 
-@st.cache
+@st.experimental_memo
 def get_news_length_metric(data_set):
     x = data_set['Length of post']
     longest_news = max(x)
@@ -67,7 +67,7 @@ def get_news_length_metric(data_set):
     std_length = round(np.std(x), 1)
     return longest_news, shortest_news, mean_length, median_length, std_length
 
-@st.cache(allow_output_mutation=True)
+@st.experimental_memo
 def filter_by_date(data_to_filter, date_input):
     if date_input == 'All':
         return data_to_filter
@@ -76,11 +76,11 @@ def filter_by_date(data_to_filter, date_input):
         return data_to_filter[result]
 
 
-@st.cache
+@st.experimental_memo
 def word_freq(data_set,n, tfidf_use):
     word_frequency(data_set, n, use_tfidf = tfidf_use)
 
-@st.cache
+@st.experimental_memo
 def cleaner_nlp(data_set, feature_name):
     """
     feature_name must be a string and data_set a pandas dataframe
@@ -88,7 +88,7 @@ def cleaner_nlp(data_set, feature_name):
     summary = data_set[feature_name].apply(lambda x: news_cleaner(x))
     return summary
 
-@st.cache(allow_output_mutation=True)
+@st.experimental_memo
 def filter_themes(data_to_filter, user_input):
     result = data_to_filter['Themes'] == user_input
     return data_to_filter[result]
@@ -138,7 +138,7 @@ def pie_viz(df):
 
 
 ## Wordcloud
-@st.cache(allow_output_mutation=True)
+@st.experimental_singleton
 def wordclouds(words, word_count):
    
     df = pd.DataFrame({'word': words,
@@ -175,7 +175,7 @@ my_data = get_data('all_data.db')
 
 #my_data['Themes'] = cluster_news(my_data, 'Full News')
 
-@st.cache(allow_output_mutation=True)
+@st.experimental_memo
 def cluster_filter(dataset):
     my_dates = np.array(dataset['Date_posted'].unique())
     date_option = np.append("All", my_dates)
