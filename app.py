@@ -328,7 +328,8 @@ if __name__ == "__main__":
         option_pie = st.selectbox('Choose a date to filter by:', date_option, key=3331)
 
         summary_data_by_date_pie = filter_by_date(my_data, option_pie)
-        summary_data_by_date_pie['Themes'] = cluster_dict[option_pie]
+        summary_data_by_date_pie.loc[:,'Themes'] = cluster_dict[option_pie]
+        #summary_data_by_date_pie['Themes'] = cluster_dict[option_pie]
         
         st.subheader("Theme Breakdown for " + str(option_pie))
         st.subheader("All the news articles can be divided into " + str(max(cluster_dict[option_pie]) + 1) + " clusters")
@@ -341,7 +342,8 @@ if __name__ == "__main__":
     summary_data_by_date = filter_by_date(my_data, option_4)
 
     col1, col2 = st.columns([1, 1])
-    summary_data_by_date['Themes'] = cluster_dict[option_4]
+    summary_data_by_date.loc[:,'Themes'] = cluster_dict[option_4]
+    #summary_data_by_date['Themes'] = cluster_dict[option_4]
     clusters_filtered, time_now_filtered, total_news_filtered, Topics_filtered = get_metric(summary_data_by_date)
     
     with col1:
