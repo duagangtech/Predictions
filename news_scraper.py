@@ -57,8 +57,8 @@ def get_RSS_data (URL):
         conn = sqlite3.connect(name_of_db)
         Current_df = pd.read_sql_query("SELECT * from CNN_News", conn)
         old_new_news = pd.read_sql_query("SELECT * from temp_news", conn)
-        full_news = pd.concat([Current_df, old_new_news],ignore_index= True, axis = 0)
-        full_news.to_sql(name_of_table, conn, if_exists = 'append', index = False)
+        # full_news = pd.concat([Current_df, old_new_news],ignore_index= True, axis = 0)
+        old_new_news.to_sql(name_of_table, conn, if_exists = 'append', index = False)
         conn.close()
         old_url = Current_df['News_Link']
     except:
