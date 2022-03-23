@@ -7,10 +7,6 @@ import feedparser
 import regex as re
 import sqlite3
 import time
-# from sklearn.cluster import KMeans
-# import numpy as np
-# from sentence_transformers import SentenceTransformer
-# from sklearn.metrics import silhouette_score
 from datetime import datetime
 
 
