@@ -98,8 +98,6 @@ def filter_by_date(data_to_filter, date_input):
         return data_to_filter[result]
 
 
-
-
 @st.experimental_memo
 def word_freq(data_set, n, tfidf_use):
     word_frequency(data_set, n, use_tfidf = tfidf_use)
@@ -141,10 +139,9 @@ def hist_viz (dataset, feature_name, bins):
     st.pyplot(fig)
 
 def timeseries(df):
-    fig = px.scatter(df, x='date', y="Length of post", title='Length of News article', color="Themes")
+    fig = px.scatter(df, x='date', y="Length of post", title='Length of News article')
     fig.update_layout(plot_bgcolor="white")
     st.plotly_chart(fig, use_container_width=True)
-
 
 
 ## PieChart
@@ -238,19 +235,19 @@ def cluster_filter(data_to_cluster, date_of_news):
     returns a dictionary with the dates as key and the values are the topics for each group
     """
     #my_dates = np.array(dataset['Date_posted'].unique())
-    date_option = np.append("All", date_of_news)
+    #date_option = np.append("All", date_of_news)
     new_dict = {}
-    for i in date_option:
-        if i == 'All':
-            theme = cluster_news(full_data, 'Full News')
+    for i in date_of_news:
+        # if i == 'All':
+        #     theme = cluster_news(full_data, 'Full News')
+        #     new_dict[i] = theme
+        # else:
+        new_data = filter_by_date(data_to_cluster, i)
+        if new_data.shape[0] > 1:
+            theme = cluster_news(new_data, 'Full News')
             new_dict[i] = theme
         else:
-            new_data = filter_by_date(data_to_cluster, i)
-            if new_data.shape[0] > 1:
-                theme = cluster_news(new_data, 'Full News')
-                new_dict[i] = theme
-            else:
-                new_dict[i] = np.array([0])
+            new_dict[i] = np.array([0])
     return new_dict
 
 with st.spinner('App is Currently Updating after receiving new data!!'):
@@ -269,7 +266,7 @@ def alter_cluster_dict(new_dates):
             # if the key is not already in the current dictionary, create it
             current_themes[i] = cluster_dict[i]
 
-    current_themes['All'] = cluster_dict['All']
+    #current_themes['All'] = cluster_dict['All']
 
     # Save the data
     with open(pickle_file_name, 'wb') as f:
@@ -281,8 +278,11 @@ def alter_cluster_dict(new_dates):
 cluster_dict = alter_cluster_dict(new_dates)
 
 # Error tbw
-full_data['Themes'] = cluster_dict["All"]
+#full_data['Themes'] = cluster_dict["All"]
 
+current_date = max(np.array(full_data['Date_posted'].unique()))
+data_today = filter_by_date(full_data, current_date)
+data_today.loc[:,'Themes'] = cluster_dict[current_date]
 
 if __name__ == "__main__":
     
@@ -300,13 +300,14 @@ if __name__ == "__main__":
     
     #################################################### Top Metric ######################################################
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
-    clusters, time_now, total_news, Topics = get_metric(full_data)
+    clusters, time_now, total_news, Topics = get_metric(data_today)
 
-    col1.metric("Total News Collected", str(total_news))
-    col2.metric("Total Number of Themes/Cluster for all news", str(clusters))
-    col3.metric("Last Updated", time_now.strftime("%Y-%m-%d"), time_now.strftime("%H:%M") + " UTC")
+    col1.metric("Total News Collected Today", str(total_news))
+    col2.metric("Total News Collected Overall", str(full_data.shape[0]))
+    col3.metric("Total Number of Themes/Clusters today", str(clusters))
+    col4.metric("Last Updated", time_now.strftime("%Y-%m-%d"), time_now.strftime("%H:%M") + " UTC")
     
     #######################################################################################################################
 
@@ -415,9 +416,9 @@ if __name__ == "__main__":
     col0, col1, col2 = st.columns([1, 2, 1])
 
     with col1:
-
+       # date_option = np.append("All", my_dates)
         st.subheader("Overview")
-        option_pie = st.selectbox('Choose a date to filter by:', date_option, key=3331)
+        option_pie = st.selectbox('Choose a date to filter by:', my_dates, key=3331)
 
         summary_data_by_date_pie = filter_by_date(full_data, option_pie)
         summary_data_by_date_pie.loc[:,'Themes'] = cluster_dict[option_pie]
@@ -429,7 +430,7 @@ if __name__ == "__main__":
         
     st.subheader("We can finally check out all the news in each group and filter by both the date posted and group")
 
-    option_4 = st.selectbox('Choose a date to filter by:', date_option, key=31)
+    option_4 = st.selectbox('Choose a date to filter by:', my_dates, key=31)
     
     summary_data_by_date = filter_by_date(full_data, option_4)
 
