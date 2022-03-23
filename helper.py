@@ -28,13 +28,13 @@ def fun_tf (news_sentences):
     new_matrix = tf_vectorizer.fit_transform(news)
     return new_matrix
 
-def news_clustering(news_sentences,model_name, k_max = 15):
+def news_clustering(news_sentences,model_name, k_max):
     s = np.array(news_sentences)
     x = model_name.encode(s)
     sil = []
     
     for k in range(2, k_max+1):
-        km = KMeans(n_clusters= k, init = 'random', n_init = 10, max_iter= 500, tol= 1e-04, random_state= 123)
+        km = KMeans(n_clusters= k, init = 'random', n_init = 10, max_iter= 700, tol= 1e-04, random_state= 123)
         y_km = km.fit(x)
         label = y_km.labels_
         try:
