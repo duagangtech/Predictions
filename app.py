@@ -476,5 +476,3 @@ if __name__ == "__main__":
     
     st.table(theme_data[['Title','Summary', 'News_Link']])
 
-st.write("")
-st.header("Coming Soon: Sentiment Analysis (Once I have a bit more data!)")
