@@ -1,15 +1,16 @@
-from email import message
+# from email import message
 from bs4 import BeautifulSoup
+from pip import main
 import requests
 import pandas as pd
 import feedparser
 import regex as re
 import sqlite3
 import time
-from sklearn.cluster import KMeans
-import numpy as np
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics import silhouette_score
+# from sklearn.cluster import KMeans
+# import numpy as np
+# from sentence_transformers import SentenceTransformer
+# from sklearn.metrics import silhouette_score
 from datetime import datetime
 
 
@@ -17,6 +18,7 @@ from datetime import datetime
 name_of_db = 'all_data.db'
 CNN_RSS_URL = "http://rss.cnn.com/rss/cnn_latest.rss"
 name_of_table = "CNN_News"
+temp_table = "temp_news"
 
 # time now
 time_now = datetime.now()
@@ -54,8 +56,11 @@ def get_RSS_data (URL):
     try:
         conn = sqlite3.connect(name_of_db)
         Current_df = pd.read_sql_query("SELECT * from CNN_News", conn)
-        old_url = Current_df['News_Link']
+        old_new_news = pd.read_sql_query("SELECT * from temp_news", conn)
+        full_news = pd.concat([Current_df, old_new_news],ignore_index= True, axis = 0)
+        full_news.to_sql(name_of_table, conn, if_exists = 'append', index = False)
         conn.close()
+        old_url = Current_df['News_Link']
     except:
         old_url = []
 
@@ -151,9 +156,11 @@ def rss_to_db(database_name):
 
     # Save table to database
     data_news.sort_values(by = 'Date_Published', inplace = True)
-    data_news.to_sql(name_of_table, db_connection, if_exists = 'append', index = False)
+    #data_news.to_sql(name_of_table, db_connection, if_exists = 'append', index = False)
 
-    message = str(data_news.shape[0]) + " News Articles Added"
+    data_news.to_sql(temp_table, db_connection, if_exists = 'replace', index = False)
+
+    message = str(data_news.shape[0]) + " News Articles Added to " + temp_table
 
     # Keep track of Changes
     #try:

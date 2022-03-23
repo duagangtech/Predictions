@@ -2,7 +2,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 import numpy as np
-from sentence_transformers import SentenceTransformer
+#from sentence_transformers import SentenceTransformer
 from sklearn.metrics import silhouette_score
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -10,7 +10,7 @@ import seaborn as sns
 import regex as re
 import contractions
 
-model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
+#model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 
 # news_sentences = df['Full News']
 def func (news_sentences):
@@ -28,9 +28,9 @@ def fun_tf (news_sentences):
     new_matrix = tf_vectorizer.fit_transform(news)
     return new_matrix
 
-def news_clustering(news_sentences, k_max = 15):
+def news_clustering(news_sentences,model_name, k_max = 15):
     s = np.array(news_sentences)
-    x = model.encode(s)
+    x = model_name.encode(s)
     sil = []
     
     for k in range(2, k_max+1):
@@ -45,9 +45,7 @@ def news_clustering(news_sentences, k_max = 15):
     optimal_k = sil.index(max(sil)) + 1
     
     km = KMeans(n_clusters= optimal_k, init = 'random', n_init = 10, max_iter= 300, tol= 1e-04, random_state= 123)
-
     y_km = km.fit_predict(x)
-
     return y_km
 
 
