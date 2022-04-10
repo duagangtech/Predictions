@@ -11,7 +11,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
 from helper import *
-import math
+#import math
 from wordcloud import WordCloud
 import plotly.express as px
 import pickle
@@ -197,7 +197,7 @@ def cluster_news (dataset, feature_to_cluster):
     feature_to_cluster -> string
     """
     model_name = get_model()
-    k = math.ceil(math.sqrt(full_data.shape[0]))
+    k = 15  # math.ceil(math.sqrt(dataset.shape[0]))
     themes = news_clustering(dataset[feature_to_cluster],model_name, k_max = k)
     return themes
 
