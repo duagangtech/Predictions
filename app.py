@@ -197,7 +197,7 @@ def cluster_news (dataset, feature_to_cluster):
     feature_to_cluster -> string
     """
     model_name = get_model()
-    k = 15  # math.ceil(math.sqrt(dataset.shape[0]))
+    k = 10  # math.ceil(math.sqrt(dataset.shape[0]))
     themes = news_clustering(dataset[feature_to_cluster],model_name, k_max = k)
     return themes
 
@@ -421,6 +421,7 @@ if __name__ == "__main__":
         option_pie = st.selectbox('Choose a date to filter by:', my_dates, key=3331)
 
         summary_data_by_date_pie = filter_by_date(full_data, option_pie)
+        
         summary_data_by_date_pie.loc[:,'Themes'] = cluster_dict[option_pie]
         #summary_data_by_date_pie['Themes'] = cluster_dict[option_pie]
         
