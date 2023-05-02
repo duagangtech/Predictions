@@ -2,3 +2,5 @@ PredictionEnv/
 rough_work.ipynb
 extract_news.ipynb
 news.pickle
+collect_news.db
+data_check.ipynb

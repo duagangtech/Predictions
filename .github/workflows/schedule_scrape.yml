@@ -23,7 +23,7 @@ jobs:
           pip install -r requirements.txt
           
       - name: execute py script 
-        run: python news_scraper.py
+        run: python news_scraper_V2.py
 
       - name: commit files
         run: |
