@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from helper import *
 import math
-#from wordcloud import WordCloud
+from wordcloud import WordCloud
 import plotly.express as px
 import pickle
 from sentence_transformers import SentenceTransformer
