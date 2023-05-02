@@ -1,7 +1,7 @@
 streamlit
 tensorflow
 requests
-sklearn
+scikit-learn
 pandas
 numpy
 sentence_transformers
