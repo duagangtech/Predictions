@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from helper import *
 import math
-from wordcloud import WordCloud
+#from wordcloud import WordCloud
 import plotly.express as px
 import pickle
 from sentence_transformers import SentenceTransformer
@@ -25,7 +25,7 @@ st.set_page_config(
  )
 
 # Variables
-name_of_db = "all_data.db"
+name_of_db = "scrape_news_V2.db"
 temp_table = "temp_news"
 main_table = "CNN_News"
 #json_file_name = "clusters_so_far.json"
@@ -55,7 +55,7 @@ new_data = get_data(name_of_db, temp_table)
 full_data = pd.concat([main_data, new_data],ignore_index= True, axis = 0)
 
 
-@st.experimental_memo
+@st.cache_data
 def get_metric(dataset):
 
     #Total Cluster
@@ -77,7 +77,7 @@ def get_metric(dataset):
     return number_of_clusters, now, total, labels
 
 
-@st.experimental_memo
+@st.cache_data
 def get_news_length_metric(data_set):
     x = data_set['Length of post']
     longest_news = max(x)
@@ -89,7 +89,7 @@ def get_news_length_metric(data_set):
 
 
 
-@st.experimental_memo
+@st.cache_data
 def filter_by_date(data_to_filter, date_input):
     if date_input == 'All':
         return data_to_filter
@@ -98,12 +98,12 @@ def filter_by_date(data_to_filter, date_input):
         return data_to_filter[result]
 
 
-@st.experimental_memo
+@st.cache_data
 def word_freq(data_set, n, tfidf_use):
     word_frequency(data_set, n, use_tfidf = tfidf_use)
 
 
-@st.experimental_memo
+@st.cache_data
 def cleaner_nlp(data_set, feature_name):
     """
     feature_name must be a string and data_set a pandas dataframe
@@ -113,7 +113,7 @@ def cleaner_nlp(data_set, feature_name):
 
 
 
-@st.experimental_memo
+@st.cache_data
 def filter_themes(data_to_filter, user_input):
     result = data_to_filter['Themes'] == user_input
     return data_to_filter[result]
@@ -163,7 +163,7 @@ def pie_viz(df):
 
 
 ## Wordcloud
-@st.experimental_singleton
+@st.cache_resource
 def wordclouds(words, word_count):
    
     df = pd.DataFrame({'word': words,
@@ -185,12 +185,12 @@ def wordcloud_viz(words, word_count):
     st.pyplot(fig)
 
 ## Theme Clustering
-@st.experimental_singleton # Initialize only once
+@st.cache_resource # Initialize only once
 def get_model():
     model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
     return model
 
-@st.experimental_singleton
+@st.cache_resource
 def cluster_news (dataset, feature_to_cluster):
     """
     dataset -> pandas Dataframe
@@ -229,7 +229,7 @@ data_for_cluster, new_dates = get_unique_data(new_data, main_data)
 
 
 ## Cluster the new data by date and the full data when date == All
-@st.experimental_memo
+@st.cache_data
 def cluster_filter(data_to_cluster, date_of_news):
     """
     returns a dictionary with the dates as key and the values are the topics for each group
@@ -255,7 +255,7 @@ with st.spinner('App is Currently Updating after receiving new data!!'):
     cluster_dict = cluster_filter(data_for_cluster, new_dates)
     
 
-@st.experimental_singleton
+@st.cache_resource
 def alter_cluster_dict(new_dates):
     with open(pickle_file_name, 'rb') as f:
         current_themes = pickle.load(f)

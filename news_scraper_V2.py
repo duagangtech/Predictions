@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Variables
-name_of_db = 'scrape_news.db'
+name_of_db = 'scrape_news_V2.db'
 CNN_RSS_URL = "http://rss.cnn.com/rss/cnn_latest.rss"
 name_of_table = "CNN_News"
 temp_table = "temp_news"
@@ -61,7 +61,7 @@ def get_RSS_data (URL):
             news_link.append(Current_news.link)
 
             # to avoid sending too many requests at once
-           # time.sleep(2)
+            #time.sleep(2)
 
             if re.match(live_news_check, Current_news.link):
                 r = requests.get(Current_news.link)
@@ -110,6 +110,7 @@ def rss_to_db(database_name):
 
     # Save table to database
     data_news.sort_values(by = 'Date_Published', inplace = True)
+    
     #data_news.to_sql(name_of_table, db_connection, if_exists = 'append', index = False)
 
     result = data_news['Length of post'] == 1
@@ -120,20 +121,22 @@ def rss_to_db(database_name):
     message = str(data_news.shape[0]) + " News Articles Added to " + temp_table
 
     # Keep track of Changes
-    #try:
-    change_log = pd.DataFrame({'Date': scrape_time, "Title": [message]})
-    change_log.to_sql('Change_log', db_connection, if_exists = 'append', index = False)
+    try:
+        change_log = pd.DataFrame({'Date': scrape_time, "Title": [message]})
+        change_log.to_sql('Change_log', db_connection, if_exists = 'append', index = False)
 
-    # Keep the most recent updated version
-    Current_df = pd.read_sql_query("SELECT * from CNN_News", db_connection)
-    
-    duplicate_rem = Current_df.sort_values('Length of post').drop_duplicates(subset = ['News_Link'], keep="first")
+        # Keep the most recent updated version
+        Current_df = pd.read_sql_query("SELECT * from CNN_News", db_connection)
+            
+        duplicate_rem = Current_df.sort_values('Length of post').drop_duplicates(subset = ['News_Link'], keep="first")
 
-    # Also remove articles that have no content
-    result = duplicate_rem['Length of post'] == 1
-    duplicate_rem.drop(duplicate_rem[result].index, inplace=True)
+        # Also remove articles that have no content
+        result = duplicate_rem['Length of post'] == 1
+        duplicate_rem.drop(duplicate_rem[result].index, inplace=True)
 
-    duplicate_rem.to_sql(name_of_table, db_connection, if_exists = 'replace', index = False)
+        duplicate_rem.to_sql(name_of_table, db_connection, if_exists = 'replace', index = False)
+    except:
+        pass
 
     # Close database
     db_connection.close()
