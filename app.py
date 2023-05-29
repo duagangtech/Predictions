@@ -422,7 +422,10 @@ if __name__ == "__main__":
 
         summary_data_by_date_pie = filter_by_date(full_data, option_pie)
         
-        summary_data_by_date_pie.loc[:,'Themes'] = cluster_dict[option_pie]
+        try:
+            summary_data_by_date_pie.loc[:,'Themes'] = cluster_dict[option_pie]
+        except:
+            pass
         #summary_data_by_date_pie['Themes'] = cluster_dict[option_pie]
         
         st.subheader("Theme Breakdown for " + str(option_pie))
