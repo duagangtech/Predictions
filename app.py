@@ -405,78 +405,75 @@ if __name__ == "__main__":
     
     
     ########################################## Cluster Documents #####################################################
-    st.header("Clustering news that are similar to each other to get common themes")
+    # st.header("Clustering news that are similar to each other to get common themes")
 
-    st.subheader("Quick Breakdown of Common themes for All News")
+    # st.subheader("Quick Breakdown of Common themes for All News")
 
-    st.write("""This was done using SentenceTransformers from the HuggingFace Library that produces BERT embeddings for the sentences from each news article. Once the 
-        sentence embeddings were extracted, KMeans Clustering was used to group the similar news articles together. So all the news articles that are similar to each are
-        grouped into the same 'Topic'.""")
+    # st.write("""This was done using SentenceTransformers from the HuggingFace Library that produces BERT embeddings for the sentences from each news article. Once the 
+    #     sentence embeddings were extracted, KMeans Clustering was used to group the similar news articles together. So all the news articles that are similar to each are
+    #     grouped into the same 'Topic'.""")
 
-    col0, col1, col2 = st.columns([1, 2, 1])
+    # col0, col1, col2 = st.columns([1, 2, 1])
 
-    with col1:
-       # date_option = np.append("All", my_dates)
-        st.subheader("Overview")
-        option_pie = st.selectbox('Choose a date to filter by:', my_dates, key=3331)
+    # with col1:
+    #    # date_option = np.append("All", my_dates)
+    #     st.subheader("Overview")
+    #     option_pie = st.selectbox('Choose a date to filter by:', my_dates, key=3331)
 
-        summary_data_by_date_pie = filter_by_date(full_data, option_pie)
+    #     summary_data_by_date_pie = filter_by_date(full_data, option_pie)
         
-        try:
-            summary_data_by_date_pie.loc[:,'Themes'] = cluster_dict[option_pie]
-        except:
-            pass
-        #summary_data_by_date_pie['Themes'] = cluster_dict[option_pie]
+    #     summary_data_by_date_pie.loc[:,'Themes'] = cluster_dict[option_pie]
+    #     #summary_data_by_date_pie['Themes'] = cluster_dict[option_pie]
         
-        st.subheader("Theme Breakdown for " + str(option_pie))
-        st.subheader("All the news articles can be divided into " + str(max(cluster_dict[option_pie]) + 1) + " clusters")
-        pie_viz(summary_data_by_date_pie)
+    #     st.subheader("Theme Breakdown for " + str(option_pie))
+    #     st.subheader("All the news articles can be divided into " + str(max(cluster_dict[option_pie]) + 1) + " clusters")
+    #     pie_viz(summary_data_by_date_pie)
         
-    st.subheader("We can finally check out all the news in each group and filter by both the date posted and group")
+    # st.subheader("We can finally check out all the news in each group and filter by both the date posted and group")
 
-    option_4 = st.selectbox('Choose a date to filter by:', my_dates, key=31)
+    # option_4 = st.selectbox('Choose a date to filter by:', my_dates, key=31)
     
-    summary_data_by_date = filter_by_date(full_data, option_4)
+    # summary_data_by_date = filter_by_date(full_data, option_4)
 
-    col1, col2 = st.columns([1, 1])
-    summary_data_by_date.loc[:,'Themes'] = cluster_dict[option_4]
-    #summary_data_by_date['Themes'] = cluster_dict[option_4]
-    clusters_filtered, time_now_filtered, total_news_filtered, Topics_filtered = get_metric(summary_data_by_date)
+    # col1, col2 = st.columns([1, 1])
+    # summary_data_by_date.loc[:,'Themes'] = cluster_dict[option_4]
+    # #summary_data_by_date['Themes'] = cluster_dict[option_4]
+    # clusters_filtered, time_now_filtered, total_news_filtered, Topics_filtered = get_metric(summary_data_by_date)
     
-    with col1:
-        theme_choose = st.radio(
-     "Check out News for each group",
-     Topics_filtered)
+    # with col1:
+    #     theme_choose = st.radio(
+    #  "Check out News for each group",
+    #  Topics_filtered)
 
-        user_input = int(theme_choose[6:]) - 1
+    #     user_input = int(theme_choose[6:]) - 1
 
-        theme_data = filter_themes(summary_data_by_date, user_input)
-        try:
-            words_themes, word_count_themes = word_frequency(cleaner_nlp(theme_data, "Full News"), 100, use_tfidf= True)
-        except:
-            # Bug needs to be fixed!
-            words_themes, word_count_themes = word_frequency(cleaner_nlp(theme_data, "Summary"), 100, use_tfidf= True)
+    #     theme_data = filter_themes(summary_data_by_date, user_input)
+    #     try:
+    #         words_themes, word_count_themes = word_frequency(cleaner_nlp(theme_data, "Full News"), 100, use_tfidf= True)
+    #     except:
+    #         # Bug needs to be fixed!
+    #         words_themes, word_count_themes = word_frequency(cleaner_nlp(theme_data, "Summary"), 100, use_tfidf= True)
 
-    longest, shortest, mean_len, median_len, std_len = get_news_length_metric(theme_data)
+    # longest, shortest, mean_len, median_len, std_len = get_news_length_metric(theme_data)
 
-    col2.subheader("Summary")
-    col2.write("Here we can see that the longest news has " + str(longest) + " words")
-    col2.write("Here we can see that the shortest news has " + str(shortest) + " words")
-    col2.write("The average length of a news is " + str(mean_len) +
-     " words" + "with median " + str(median_len) + " words and standard deviation of " + str(std_len))
-    col2.write("Total News Articles " + str(theme_data.shape[0]))
+    # col2.subheader("Summary")
+    # col2.write("Here we can see that the longest news has " + str(longest) + " words")
+    # col2.write("Here we can see that the shortest news has " + str(shortest) + " words")
+    # col2.write("The average length of a news is " + str(mean_len) +
+    #  " words" + "with median " + str(median_len) + " words and standard deviation of " + str(std_len))
+    # col2.write("Total News Articles " + str(theme_data.shape[0]))
 
-    col1_themes, col2_themes = st.columns([1, 1])
+    # col1_themes, col2_themes = st.columns([1, 1])
     
-    with col1_themes.container():
-        st.subheader("Here are the most important words from all news from " + str(option_4) + " and Topic " + str(max(cluster_dict[option_4]) + 1))
-        linePlot(words_themes[:15], word_count_themes[:15])
+    # with col1_themes.container():
+    #     st.subheader("Here are the most important words from all news from " + str(option_4) + " and Topic " + str(max(cluster_dict[option_4]) + 1))
+    #     linePlot(words_themes[:15], word_count_themes[:15])
 
-    with col2_themes:
-        st.subheader("A visual summary of the important words from all news from " + str(option_4) + " and Topic " + str(max(cluster_dict[option_4]) + 1))
-        wordcloud_viz(words_themes, word_count_themes)
+    # with col2_themes:
+    #     st.subheader("A visual summary of the important words from all news from " + str(option_4) + " and Topic " + str(max(cluster_dict[option_4]) + 1))
+    #     wordcloud_viz(words_themes, word_count_themes)
 
-    st.subheader("Here are the news for " + str(option_4) + " and Topic " + str(max(cluster_dict[option_4]) + 1))
+    # st.subheader("Here are the news for " + str(option_4) + " and Topic " + str(max(cluster_dict[option_4]) + 1))
     
-    st.table(theme_data[['Title','Summary', 'News_Link']])
+    # st.table(theme_data[['Title','Summary', 'News_Link']])
 
